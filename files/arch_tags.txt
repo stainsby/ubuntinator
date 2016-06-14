@@ -1,7 +1,7 @@
 "amd64" "Intel 64-bit / AMD 64"
 "i386" "Intel 32-bit"
 "arm64" "ARM 64-bit"
-"arnhf" "ARM64 hard float"
+"arnhf" "ARM 64-bit hard float"
 "powerpc" "PowerPC"
 "ppc64el" "PowerPC POWER8 and above"
 "s390x" "S/390"

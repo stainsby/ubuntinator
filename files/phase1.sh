@@ -7,7 +7,7 @@ BUILD_LOG_DIR="$BUILD_DIR/log"
 BUILD_LOG_FILE="$BUILD_LOG_DIR/build_log.txt"
 BUILD_ROOTFS="$BUILD_DIR/rootfs"
 
-mkdir "$BUILD_LOG_DIR"
+mkdir -p "$BUILD_LOG_DIR"
 
 function blog() {
   echo $1 >> "$BUILD_LOG_FILE"
@@ -21,9 +21,10 @@ function cleanup() {
   [[ ! -z "$CHROOT_LOG_MOUNTED" ]]  && ( umount "$BUILD_ROOTFS/$CHROOT_APP_DIR/log" || ( blog "failed to unmount bound mount points in the chroot"  && MANUALLY_CLEAN="1" ) )
   [[ ! -z "$CHROOT_DEV_MOUNTED" ]]  && ( umount "$BUILD_ROOTFS/dev"                 || ( blog "failed to unmount bound mount points in the chroot" && MANUALLY_CLEAN="1" ) )
   [[ ! -z "$CHROOT_PROC_MOUNTED" ]] && ( umount "$BUILD_ROOTFS/proc"                || ( blog "failed to unmount bound mount points in the chroot" && MANUALLY_CLEAN="1" ) )
-  [[ -z "$MANUALLY_CLEAN" ]] && echo "TODO: would autoclean $BUILD_DIR" # TODO: rm -rf "$BUILD_DIR"
+  [[ ! -z "$ROOTFS_MOUNTED" ]]      && ( umount "$BUILD_ROOTFS"                     || ( blog "failed to unmount root file system" && MANUALLY_CLEAN="1" ) )
+  [[ -z "$MANUALLY_CLEAN" ]] && rm -rf "$BUILD_DIR"
   [[ ! -z "$MANUALLY_CLEAN" ]] && echo "you need to manually clean $BUILD_DIR .. ENSURE that you unmount $BUILD_ROOTFS/dev and/or  "$BUILD_ROOTFS/proc"  in the chroot FIRST or you may crash your host"
-  blog "exiting"
+  echo "exiting"
 }
 trap cleanup EXIT
 
@@ -46,16 +47,17 @@ function abort() {
 INSTALL_DEV=`dialog --stdout --backtitle "$BTITLE" --title "Select install location" --inputbox "This script will install Ubuntu into a partition, (re-)label the partition, and, optionally, install a bootloader. You need to provide an empy partition with a EXT filesystem on it such as EXT4.\n\nEnter the device file (eg. /dev/sdd1) to install to:" 20 60` || abort
 blog "install device '$INSTALL_DEV' selected"
 
-mkdir "$BUILD_ROOTFS"
-# TODO
-#mount "$INSTALL_DEV" "$BUILD_ROOTFS" || abort "unable to mount $INSTALL_DEV on $BUILD_ROOTFS"
+mkdir -p "$BUILD_ROOTFS"
+mount "$INSTALL_DEV" "$BUILD_ROOTFS" || abort "unable to mount $INSTALL_DEV on $BUILD_ROOTFS"
+ROOTFS_MOUNTED="1"
 
-[[ ! -z `ls -A "$BUILD_ROOTFS"` ]] && {
+
+[[ ! -z `ls -A "$BUILD_ROOTFS" | grep -v 'lost+found'` ]] && {
   blog "aborting because partition is not empty"
   abort "partition not empty"
 }
 
-# TODO e2label ""$INSTALL_DEV" UBUROOT
+e2label "$INSTALL_DEV" UBUROOT || abort "failed to label partition"
 
 RELEASE_PATH=`dialog --stdout --backtitle "$BTITLE" --title "Select Release" --no-tags --menu "Select the Ubuntu Base release you want to install." 40 80 20 --file release_tags.txt` || abort
 RELEASE=`echo $RELEASE_PATH | cut -d '/' -f 1`
@@ -97,8 +99,12 @@ CHROOT_PROC_MOUNTED="1"
 [[ -e /etc/resolv.conf ]] && cp /etc/resolv.conf "$BUILD_ROOTFS/etc/resolv.conf" || blog "couldn't copy resolv.conf: chroot networking may fail"
 
 # copy chroot script
-cp ./phase2.sh ./linux_image_tags.txt "$BUILD_ROOTFS/$CHROOT_APP_DIR" || abort "failed to copy required files to chroot"
+cp ./phase2.sh  ./phase3.sh ./linux_image_tags.txt "$BUILD_ROOTFS/$CHROOT_APP_DIR" || abort "failed to copy required files to chroot"
 CHROOT_CMD="$CHROOT_APP_DIR/phase2.sh"
 blog "executing chroot with command $CHROOT_CMD"
-chroot "$BUILD_ROOTFS" "$CHROOT_APP_DIR/phase2.sh" "" abort "chroot failed"
 
+
+# DO CHROOT .. AND ON TO PHASE 2
+
+
+chroot "$BUILD_ROOTFS" "$CHROOT_APP_DIR/phase2.sh" "" abort "chroot failed"
