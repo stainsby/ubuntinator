@@ -24,26 +24,40 @@ function abort() {
 }
 
 
-blog "getting network paramaters via DHCP"
-dhclient && sleep 3 || abort "failed to get network paramters"
+blog "getting network parameters via DHCP"
+dhclient && sleep 3 || abort "failed to get network parameters"
 
-blog "finishing installation"
-blog "updating installed packages"
-apt-get update && apt-get -y upgrade || abort "failed to update installed packages"
-  
+blog "updating package database"
+apt-get update || abort "failed to update package database"
+
+blog "installing dialog packages"
+apt-get -y install dialog whiptail || abort "failed to install dialog packages"
+
+apt-get -y install console-setup || abort "failed to install console package"
+
+blog "installing language package"
+apt-get -y install language-pack-en || abort "failed to install language package"
+
+blog "adding some basic networking packages"
+apt-get -y install isc-dhcp-client netbase || abort "failed to install basic networking packages"
+
 blog "adding useful extra packages"
-apt-get -y install console-setup language-pack-en dialog netbase pciutils \
-  usbutils apt-utils bash-completion isc-dhcp-client rsyslog cron util-linux \
+apt-get -y install language-pack-en pciutils usbutils apt-utils bash-completion rsyslog cron util-linux \
   rsync openssh-server openssh-client net-tools iputils-ping sudo less nano \
-  psmisc e2fsprogs htop || abort "failed to install extra packages"
+  psmisc e2fsprogs htop man curl wget || abort "failed to install extra packages"
+
+blog "configuring network"
+NET_DEVICES=`ip - o link | cut -d " " -f 2 | cut -d ":" -f1 | grep -vP "^(lo)?$"`
+NET_DEVICE=`dialog --stdout --backtitle "$BTITLE" --title "Select network device" --no-items --menu "Select the network device you would like to use with DHCP." 40 80 20 $NET_DEVICES`
+[[ -n "$NET_DEVICE" ]] && {
+  echo -e "\nauto lo\niface lo inet loopback\n" >> /etc/network/interfaces
+  echo -e "\nauto $NET_DEVICE\niface $NET_DEVICE inet dhcp\n" >> /etc/network/interfaces
+}
 
 blog "updating GRUB one last time"
 update-grub2
 
 blog "cleaning up"
 apt-get -y autoremove && apt-get clean
-
-blog "restoring rc.local"
-( sleep 1 ; mv /etc/rc.local.UBU_BAK  /etc/rc.local ) &
 
 blog "installation complete - you should REBOOT now"

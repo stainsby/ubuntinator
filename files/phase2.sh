@@ -25,11 +25,18 @@ function abort() {
 
 blog "chroot running"
 cd "$CHROOT_APP_DIR"
-blog "updating package database from network"
-apt-get update && apt-get -y install software-properties-common || abort "unable to install required initial packages (1)"
-blog "adding dialog package"
-add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) universe" && apt-get update && apt-get -y install dialog || abort "unable to install required initial packages (1)"
 
+# blog "updating package database from network"
+# apt-get update && apt-get -y upgrade || abort "unable to install required initial packages"
+
+blog "updating package database from network"
+apt-get update || abort "unable to install required initial packages"
+
+blog "updating package support packages"
+apt-get -y install software-properties-common || abort "unable to install package support packages"
+
+blog "adding dialog packages"
+add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) universe" && apt-get update && apt-get -y install libterm-readline-gnu-perl dialog whiptail || abort "unable to install dialog packages"
 
 KERNEL_IMAGE=`dialog --stdout --backtitle "$BTITLE" --title "Select Kernel" --no-tags --menu "Select the Linux kernel you want to install." 40 80 20 --file linux_image_tags.txt` || abort
 blog "kernel image '$KERNEL_IMAGE' selected"
@@ -49,9 +56,4 @@ hostname "$HOST_NAME"
 blog "adding some networking packages"
 apt-get -y install isc-dhcp-client netbase iw wpasupplicant net-tools iputils-ping || abort "failed to install networking packages"
 
-blog "preparing system for boot"
-cp -a /etc/rc.local /etc/rc.local.UBU_BAK && \
-  echo '#!/bin/sh -e' > /etc/rc.local && \
-  echo "$CHROOT_APP_DIR/phase3.sh" >> /etc/rc.local
-
-blog "Success! You should now BOOT the new system to complete the installation."
+blog "Success! You should now BOOT the new system and run $CHROOT_APP_DIR/phase3.sh on it to complete the installation."
