@@ -26,9 +26,6 @@ function abort() {
 blog "chroot running"
 cd "$CHROOT_APP_DIR"
 
-# blog "updating package database from network"
-# apt-get update && apt-get -y upgrade || abort "unable to install required initial packages"
-
 blog "updating package database from network"
 apt-get update || abort "unable to install required initial packages"
 

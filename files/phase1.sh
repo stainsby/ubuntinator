@@ -39,8 +39,6 @@ function abort() {
 }
 
 
-
-
 # CREATE ROOT FILESYSTEM
 
 
