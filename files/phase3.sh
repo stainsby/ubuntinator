@@ -54,10 +54,13 @@ NET_DEVICE=`dialog --stdout --backtitle "$BTITLE" --title "Select network device
   echo -e "\nauto $NET_DEVICE\niface $NET_DEVICE inet dhcp\n" >> /etc/network/interfaces
 }
 
+blog "setting time zone"
+dpkg-reconfigure tzdata
+
 blog "updating GRUB one last time"
 update-grub2
 
 blog "cleaning up"
 apt-get -y autoremove && apt-get clean
 
-blog "installation complete - you should REBOOT now"
+blog "Success! Installation complete - you should REBOOT now."
