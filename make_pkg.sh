@@ -1,3 +1,6 @@
 #!/bin/sh -e
 
-mkdir -p dist && rm -rf dist/* && ( cd files && tar czfv ../dist/ubuntinator.tar.gz * )
+mkdir -p dist && rm -rf dist/* && \
+    cp -a files dist && cp README.md LICENSE dist/files && \
+    cd dist/files && tar czfv ../ubuntinator.tar.gz *
+
