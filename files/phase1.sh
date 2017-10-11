@@ -86,11 +86,11 @@ CHROOT_APP_DIR="/usr/local/ubuntinator"
 mkdir -p "$BUILD_ROOTFS/$CHROOT_APP_DIR/log"
 
 blog "adding bound mounts to chroot"
-mount --bind "$BUILD_LOG_DIR" "$BUILD_ROOTFS/$CHROOT_APP_DIR/log" || abort "failed to bind /dev into root fielsystem"
+mount --bind "$BUILD_LOG_DIR" "$BUILD_ROOTFS/$CHROOT_APP_DIR/log" || abort "failed to bind log directory into root filesystem"
 CHROOT_LOG_MOUNTED="1"
-mount --bind /dev "$BUILD_ROOTFS/dev" || abort "failed to bind /dev into root fielsystem"
+mount --bind /dev "$BUILD_ROOTFS/dev" || abort "failed to bind /dev into root filesystem"
 CHROOT_DEV_MOUNTED="1"
-mount --bind /proc "$BUILD_ROOTFS/proc" || abort "failed to bind /proc into root fielsystem"
+mount --bind /proc "$BUILD_ROOTFS/proc" || abort "failed to bind /proc into root filesystem"
 CHROOT_PROC_MOUNTED="1"
 
 # temporary networking
