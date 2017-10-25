@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[[ `whoami` != 'root' ]] && echo "This script must be run as root!" && exit 1
+
 # must match value from phase1
 CHROOT_APP_DIR="/usr/local/ubuntinator"
 

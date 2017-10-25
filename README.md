@@ -32,24 +32,26 @@ important data, or entire operating systems.**
 
 ## Limitations of testing
 
-Only installation of the Intel 64-bit/AMD64 variant of Xenial 
+Only installation of the Intel 64-bit/AMD64 variant of Xenial
 (Ubuntu 16.04.x) has been tested.
 
 
 ## Usage
 
 1. Copy the files in `files` to the system you wish to install *from*. We have
-found 'live' CD distributions such as Puppy Linux useful for this. The scripts
-need working network access to download files from the Internet. The
-`make_pkg.sh` script, when executed from the top-level directory, will
-create a tarball of those files for convenient copying.
+found 'live' CD distributions such as Puppy Linux useful for this. We are also
+testing on Ubuntu live CDs. The scripts need working network access to download
+files from the Internet. The `make_pkg.sh` script, when executed from the
+top-level directory, will create a tarball of those files for convenient
+copying.
 
 2. Create a new partition that you wish to install *to*, or select an existing
 empty partition. EXT3 and EXT4 file systems are supported. Others may be,
 but this has not been tested. The partiton must be empty (a `lost+found`
 directory in the top level is OK though).
 
-3. Start the process by running `phase1.sh` from the directory it resides in.
+3. Ensure you are working as the `root` user (`sudo su - root`), and then
+start the process by running `phase1.sh` from the directory it resides in.
 Follow the instructions carefully. When prompted for a partition to install
 *to*, **ensure you don't chose a partition with valuable data on it**. The
 script *should* refuse to install to a non-empty partition, but that has not

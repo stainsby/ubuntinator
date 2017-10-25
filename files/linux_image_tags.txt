@@ -1,5 +1,7 @@
 "linux-image-generic"        "Generic Linux kernel image"
+"linux-image-generic-hwe-16.04" "Generic Linux kernel image 16.04 HWE"
 "linux-image-lowlatency"     "Low latency Linux kernel image"
+"linux-image-lowlatency-hwe-16.04" "Low latency Linux kernel image 16.04 HWE"
 "linux-image-flo"            "Linux kernel image for the Nexus7 (flo)"
 "linux-image-generic-lpae"   "Linux kernel image for ARM (hard float) SMP"
 "linux-image-goldfish"       "Linux kernel image for the goldfish kernel"

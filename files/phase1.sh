@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[[ `whoami` != 'root' ]] && echo "This script must be run as root!" && exit 1
+
 BTITLE="Ubuntinator"
 BUILD_DIR=`mktemp -d`
 echo "building in $BUILD_DIR ..."
@@ -38,6 +40,13 @@ function abort() {
   exit 1
 }
 
+
+# ADD REQUIRED PACKAGES IF NEEDED
+
+[ -f /etc/lsb-release ] && grep DISTRIB_ID\=Ubuntu /etc/lsb-release && {
+  blog "ensuring required packages are installed"
+  apt-get install -y dialog
+}
 
 # CREATE ROOT FILESYSTEM
 
