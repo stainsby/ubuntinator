@@ -1,4 +1,5 @@
-"zesty/release/ubuntu-base-17.04-base" "Zesty Zapus (17.04)"
-"xenial/release/ubuntu-base-16.04.3-base" "Xenial Xerus (16.04.3)"
-"trusty/release/ubuntu-base-14.04.5-base" "Trusty Tahr (14.04.4)"
-"precise/release/ubuntu-base-12.04.5-core" "Precise Pangolin (12.04.5)"
+
+"20.10/release/ubuntu-base-20.10-base" "Groovy Gorilla (20.10)"
+"20.04.1/release/ubuntu-base-20.04.1-base" "Focal Fossa (20.04.1 LTS)"
+"18.04.5/release/ubuntu-base-18.04.5-base" "Bionic Beaver (18.04.5 LTS)"
+"16.04.6/release/ubuntu-base-16.04.6-base" "Xenial Xerus (16.04.6 LTS)"
