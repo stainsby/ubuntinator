@@ -105,8 +105,8 @@ CHROOT_PROC_MOUNTED="1"
 # temporary networking
 [[ -e /etc/resolv.conf ]] && cp /etc/resolv.conf "$BUILD_ROOTFS/etc/resolv.conf" || blog "couldn't copy resolv.conf: chroot networking may fail"
 
-# copy chroot script
-cp ./phase2.sh  ./phase3.sh ./linux_image_tags.txt "$BUILD_ROOTFS/$CHROOT_APP_DIR" || abort "failed to copy required files to chroot"
+# copy files
+cp ./*.sh  ./*.txt "$BUILD_ROOTFS/$CHROOT_APP_DIR" || abort "failed to copy files to chroot"
 CHROOT_CMD="$CHROOT_APP_DIR/phase2.sh"
 blog "executing chroot with command $CHROOT_CMD"
 
