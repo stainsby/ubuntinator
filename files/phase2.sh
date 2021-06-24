@@ -50,7 +50,6 @@ echo 'LABEL=UBUROOT / auto errors=remount-ro 0 1' >> /etc/fstab || abort "failed
 HOST_NAME=`dialog --stdout --backtitle "$BTITLE" --title "Set a host name" --inputbox "Enter name for the new host" 20 60` || abort
 
 echo "$HOST_NAME" > /etc/hostname || abort "failed to add hostname"
-hostname "$HOST_NAME"
 
 blog "adding some networking packages"
 apt-get -y install isc-dhcp-client netbase iw wpasupplicant net-tools iputils-ping || abort "failed to install networking packages"
